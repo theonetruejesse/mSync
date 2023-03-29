@@ -1,8 +1,9 @@
-import { app } from "..";
+import { app, client } from "..";
 import MessagingResponse from "twilio/lib/twiml/MessagingResponse";
 import { formatNumber } from "./helpers/formatNumber";
 import { sendText } from "./sendText";
 import bodyParser from "body-parser";
+import { TextChannel } from "discord.js";
 
 // set up:
 // Run server (yarn watch + dev)
@@ -17,7 +18,7 @@ export const smsEndpoints = () => {
     if (!message) {
       res.send("No message in query!");
     } else {
-      const reciever = formatNumber("(925) 487-3772")!;
+      const reciever: string = formatNumber("(925) 487-3772")!; // todo, not gud lol
       sendText({
         message: message as string,
         reciever,
@@ -27,11 +28,21 @@ export const smsEndpoints = () => {
   });
 
   app.post("/recieve", async (req, res) => {
-    const twilioResponse = await req.body;
-
-    const twiml = new MessagingResponse();
-    twiml.message(`You sent "${twilioResponse.Body}" to ${twilioResponse.To}.`);
-    // todo -> MMS
-    res.type("text/xml").send(twiml.toString());
+    const twilioRes = await req.body;
+    // todo -> based on phone number, get back channel
+    // todo -> database query stuff
+    const channel = await client.channels.fetch(
+      process.env.DISCORD_BOT_CHANNEL_ID
+    );
+    if (channel) {
+      (channel as TextChannel).send(req.body.Body);
+      console.log("sent!");
+    } else {
+      const twiml = new MessagingResponse();
+      // twiml.message(`You sent "${twilioRes.Body}" to ${twilioRes.To}.`);
+      twiml.message("Text did not go through.");
+      // todo -> MMS
+      res.type("text/xml").send(twiml.toString());
+    }
   });
 };
