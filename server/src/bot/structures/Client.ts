@@ -10,7 +10,7 @@ import { RegisterCommandsOptions } from "src/bot/typings/client";
 import { CommandType } from "src/bot/typings/command";
 import { Event } from "./Event";
 
-export class ExtendedClient extends Client {
+export class DiscordClient extends Client {
   commands: Collection<string, CommandType> = new Collection();
 
   constructor() {

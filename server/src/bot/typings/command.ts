@@ -1,4 +1,4 @@
-import { ExtendedClient } from "src/bot/structures/Client";
+import { DiscordClient } from "src/bot/structures/Client";
 import {
   ChatInputApplicationCommandData,
   CommandInteraction,
@@ -19,7 +19,7 @@ export interface ExtendedInteraction extends CommandInteraction {
 }
 
 interface RunOptions {
-  client: ExtendedClient;
+  client: DiscordClient;
   interaction: ExtendedInteraction;
   args: CommandInteractionOptionResolver;
 }

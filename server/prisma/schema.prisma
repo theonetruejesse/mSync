@@ -1,0 +1,23 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
+}
+
+model Contact {
+  id           Int    @id @default(autoincrement())
+  name         String @db.VarChar(255)
+  phone_number String @db.VarChar(255)
+  role_id      Int
+
+  @@index([role_id], map: "role_id_idx")
+}
+
+model Role {
+  id   Int    @id @default(autoincrement())
+  name String @db.VarChar(255)
+}
