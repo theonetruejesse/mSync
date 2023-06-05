@@ -2,25 +2,22 @@ import "dotenv-safe/config";
 import express from "express";
 import { DiscordClient } from "./bot/structures/Client";
 import { PrismaClient } from "@prisma/client";
-import { smsEndpoints } from "./sms/endpoints";
+import bodyParser from "body-parser";
+
+// import { smsEndpoints } from "./sms/endpoints";
+import messageRoute from "./routes/message";
 
 export const client = new DiscordClient();
-const prisma = new PrismaClient();
+export const prisma = new PrismaClient();
 export const app = express();
 
 const main = async () => {
   client.start();
 
-  app.get("/", (_, res) => {
-    res.send("hello world");
-  });
+  app.use(bodyParser.json());
+  app.use(bodyParser.urlencoded({ extended: false }));
 
-  smsEndpoints();
-
-  app.get("/contacts", async (_, res) => {
-    const contacts = await prisma.contact.findMany();
-    res.send(contacts);
-  });
+  app.use("/message", messageRoute);
 
   app.listen(parseInt(process.env.PORT), () => {
     console.log(`\nlistening to port ${process.env.PORT}\n`);

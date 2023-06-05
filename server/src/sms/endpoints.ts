@@ -1,6 +1,6 @@
 import { app, client } from "..";
 import MessagingResponse from "twilio/lib/twiml/MessagingResponse";
-import { formatNumber } from "./helpers/formatNumber";
+import { formatNumber } from "./utils/formatNumber";
 import { sendText } from "./sendText";
 import bodyParser from "body-parser";
 import { TextChannel } from "discord.js";
@@ -18,7 +18,8 @@ export const smsEndpoints = () => {
     if (!message) {
       res.send("No message in query!");
     } else {
-      const reciever: string = formatNumber("(925) 487-3772")!; // todo, not gud lol
+      const reciever: string = process.env.PERSONAL_NUMBER;
+      // formatNumber("(925) 487-3772")!; // todo, not gud lol
       sendText({
         message: message as string,
         reciever,
