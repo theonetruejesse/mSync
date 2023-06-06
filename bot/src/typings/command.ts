@@ -1,4 +1,3 @@
-import { DiscordClient } from "../structures/Client";
 import {
   ChatInputApplicationCommandData,
   CommandInteraction,
@@ -6,6 +5,7 @@ import {
   GuildMember,
   PermissionResolvable,
 } from "discord.js";
+import { DiscordClient } from "../structures/Client";
 
 /**
  * {

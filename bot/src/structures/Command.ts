@@ -1,4 +1,4 @@
-import { CommandType } from "src/bot/typings/command";
+import { CommandType } from "../typings/command";
 
 export class Command {
   constructor(commandOptions: CommandType) {
