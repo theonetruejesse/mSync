@@ -13,7 +13,7 @@ model User {
   firstName   String  @db.VarChar(255)
   lastName    String? @db.VarChar(255)
   phoneNumber String? @db.VarChar(255)
-  discordName String? @db.VarChar(255)
+  discordId   String? @db.VarChar(255)
   channelId   String  @db.VarChar(255)
   role        Role?   @relation(fields: [roleId], references: [id])
   roleId      Int

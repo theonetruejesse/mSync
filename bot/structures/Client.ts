@@ -3,18 +3,25 @@ import {
   Client,
   ClientEvents,
   Collection,
-  GatewayDispatchEvents,
+  IntentsBitField,
 } from "discord.js";
-import glob, { GlobOptions } from "glob";
-import { RegisterCommandsOptions } from "src/bot/typings/client";
-import { CommandType } from "src/bot/typings/command";
+import glob from "glob";
+import { RegisterCommandsOptions } from "../typings/client";
+import { CommandType } from "../typings/command";
 import { Event } from "./Event";
 
 export class DiscordClient extends Client {
   commands: Collection<string, CommandType> = new Collection();
 
   constructor() {
-    super({ intents: parseInt(process.env.DISCORD_BOT_INTENT_EVERYTHING) });
+    super({
+      intents: [
+        IntentsBitField.Flags.Guilds,
+        IntentsBitField.Flags.GuildMembers,
+        IntentsBitField.Flags.GuildMessages,
+        IntentsBitField.Flags.MessageContent,
+      ],
+    });
   }
 
   start() {
@@ -29,6 +36,7 @@ export class DiscordClient extends Client {
   async registerCommands({ commands, guildId }: RegisterCommandsOptions) {
     if (guildId) {
       this.guilds.cache.get(guildId)?.commands.set(commands);
+      console.log();
       console.log(`Registering commands to ${guildId}`);
     } else {
       this.application?.commands.set(commands);
@@ -39,13 +47,13 @@ export class DiscordClient extends Client {
   async registerModules() {
     // commands
     const slashCommands: ApplicationCommandDataResolvable[] = [];
-    const commandFiles: any = await glob(
-      `${__dirname}/../commands/*/*{.ts,.js}`
-    );
+    const commandFiles = await glob(`${__dirname}/../commands/*{.ts,.js}`);
 
+    console.log("Commands:");
     commandFiles.forEach(async (filePath: string) => {
       const command: CommandType = await this.importFile(filePath);
       if (!command.name) return;
+      console.log(`/${command.name}`);
       this.commands.set(command.name, command);
       slashCommands.push(command);
     });

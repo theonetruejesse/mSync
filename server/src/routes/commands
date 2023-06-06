@@ -1,1 +1,0 @@
-curl -d '{"firstName":"Jesse", "lastName":"Lee", "phoneNumber": "9254873772", "discordName": "Jeezus#3157", "channelId": "temp", "roleId": "1"}' -H "Content-Type: application/json" -X POST http://localhost:4000/message/user

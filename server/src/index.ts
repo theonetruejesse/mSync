@@ -1,19 +1,15 @@
 import "dotenv-safe/config";
 import express from "express";
-import { DiscordClient } from "./bot/structures/Client";
 import { PrismaClient } from "@prisma/client";
 import bodyParser from "body-parser";
 
 // import { smsEndpoints } from "./sms/endpoints";
 import messageRoute from "./routes/message";
 
-export const client = new DiscordClient();
 export const prisma = new PrismaClient();
 export const app = express();
 
 const main = async () => {
-  client.start();
-
   app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({ extended: false }));
 

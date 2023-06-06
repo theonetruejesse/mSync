@@ -1,4 +1,4 @@
-import { DiscordClient } from "src/bot/structures/Client";
+import { DiscordClient } from "../structures/Client";
 import {
   ChatInputApplicationCommandData,
   CommandInteraction,

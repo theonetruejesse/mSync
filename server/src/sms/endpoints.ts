@@ -1,9 +1,9 @@
-import { app, client } from "..";
-import MessagingResponse from "twilio/lib/twiml/MessagingResponse";
-import { formatNumber } from "./utils/formatNumber";
+import { app } from "..";
+// import MessagingResponse from "twilio/lib/twiml/MessagingResponse";
+// import { formatNumber } from "./utils/formatNumber";
 import { sendText } from "./sendText";
 import bodyParser from "body-parser";
-import { TextChannel } from "discord.js";
+// import { TextChannel } from "discord.js";
 
 // set up:
 // Run server (yarn watch + dev)
@@ -28,22 +28,22 @@ export const smsEndpoints = () => {
     }
   });
 
-  app.post("/recieve", async (req, res) => {
-    const twilioRes = await req.body;
-    // todo -> based on phone number, get back channel
-    // todo -> database query stuff
-    const channel = await client.channels.fetch(
-      process.env.DISCORD_BOT_CHANNEL_ID
-    );
-    if (channel) {
-      (channel as TextChannel).send(req.body.Body);
-      console.log("sent!");
-    } else {
-      const twiml = new MessagingResponse();
-      // twiml.message(`You sent "${twilioRes.Body}" to ${twilioRes.To}.`);
-      twiml.message("Text did not go through.");
-      // todo -> MMS
-      res.type("text/xml").send(twiml.toString());
-    }
-  });
+  // app.post("/recieve", async (req, res) => {
+  //   const twilioRes = await req.body;
+  //   // todo -> based on phone number, get back channel
+  //   // todo -> database query stuff
+  //   const channel = await client.channels.fetch(
+  //     process.env.DISCORD_BOT_CHANNEL_ID
+  //   );
+  //   if (channel) {
+  //     (channel as TextChannel).send(req.body.Body);
+  //     console.log("sent!");
+  //   } else {
+  //     const twiml = new MessagingResponse();
+  //     // twiml.message(`You sent "${twilioRes.Body}" to ${twilioRes.To}.`);
+  //     twiml.message("Text did not go through.");
+  //     // todo -> MMS
+  //     res.type("text/xml").send(twiml.toString());
+  //   }
+  // });
 };

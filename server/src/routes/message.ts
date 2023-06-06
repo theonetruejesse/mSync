@@ -15,9 +15,9 @@ router.get("/channels/:channelId", async (req, res) => {
 // gets all users, filtered by id?, number?, and username?
 router.get("/users", async (req, res) => {
   const filter: any = {};
-  if (req.query.id) filter["id"] = parseInt(req.query.id as string);
+  if (req.query.userId) filter["id"] = parseInt(req.query.id as string);
   if (req.query.number) filter["phoneNumber"] = req.query.number;
-  if (req.query.username) filter["discordName"] = req.query.username;
+  if (req.query.discord) filter["discordId"] = req.query.discord;
 
   const users = await prisma.user.findMany({ where: filter });
 
@@ -51,8 +51,8 @@ router.post("/user", async (req, res) => {
   const phoneNumber = req.body.phoneNumber
     ? (req.body.phoneNumber as string)
     : undefined;
-  const discordName = req.body.discordName
-    ? (req.body.discordName as string)
+  const discordId = req.body.discordId
+    ? (req.body.discordId as string)
     : undefined;
   const roleId = req.body.roleId
     ? parseInt(req.body.roleId as string)
@@ -64,7 +64,7 @@ router.post("/user", async (req, res) => {
       channelId,
       lastName,
       phoneNumber,
-      discordName,
+      discordId,
       roleId,
     },
   });
