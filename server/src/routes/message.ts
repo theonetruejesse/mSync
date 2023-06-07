@@ -1,13 +1,14 @@
 import express from "express";
 import { prisma } from "..";
+import { SendMessage, sendText } from "../sms/sendText";
 
 const router = express.Router();
 
 // gets all users based on a channel
 router.get("/channels/:channelId", async (req, res) => {
-  const channelId = parseInt(req.params.channelId);
+  const channelId = req.params.channelId;
   const users = await prisma.user.findMany({
-    where: { id: { equals: channelId } },
+    where: { channelId: { equals: channelId } },
   });
   res.send(users);
 });
@@ -16,8 +17,8 @@ router.get("/channels/:channelId", async (req, res) => {
 router.get("/users", async (req, res) => {
   const filter: any = {};
   if (req.query.userId) filter["id"] = parseInt(req.query.id as string);
-  if (req.query.number) filter["phoneNumber"] = req.query.number;
-  if (req.query.discord) filter["discordId"] = req.query.discord;
+  if (req.query.phoneNumber) filter["phoneNumber"] = req.query.phoneNumber;
+  if (req.query.discordId) filter["discordId"] = req.query.discordId;
 
   const users = await prisma.user.findMany({ where: filter });
 
@@ -44,7 +45,7 @@ router.post("/user", async (req, res) => {
   if (!firstName || !channelId)
     res.send("invalid, need firstName and channelId");
 
-  // there's definitely a smarter way to do this, but type safety am i right??
+  // todo, define type definitions for entire project
   const lastName = req.body.lastName
     ? (req.body.lastName as string)
     : undefined;
@@ -70,6 +71,26 @@ router.post("/user", async (req, res) => {
   });
 
   res.send(user);
+});
+
+// gets role based on id, return empty string if none exists
+// todo, would more efficent to just combine the call with get user, specify in typings
+router.get("/roles/:roleId", async (req, res) => {
+  try {
+    const roleId = parseInt(req.params.roleId);
+    const user = await prisma.role.findFirstOrThrow({
+      where: { id: { equals: roleId } },
+    });
+    res.send(user);
+  } catch (e) {
+    res.send("This role does not exist");
+  }
+});
+
+// send text to given number
+router.post("/send", async (req, res) => {
+  const sent = await sendText(req.body as SendMessage);
+  res.send(sent.body);
 });
 
 export default router;
