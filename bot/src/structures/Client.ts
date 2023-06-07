@@ -6,8 +6,8 @@ import {
   IntentsBitField,
 } from "discord.js";
 import glob from "glob";
-import { RegisterCommandsOptions } from "../typings/client";
-import { CommandType } from "../typings/command";
+import { RegisterCommandsOptions } from "../types/client";
+import { CommandType } from "../types/command";
 import { Event } from "./Event";
 
 export class DiscordClient extends Client {

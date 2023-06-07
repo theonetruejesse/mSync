@@ -1,24 +1,19 @@
 import axios from "axios";
+import { Platform, User, Role } from "../types/requests";
+import { getPlatformQuery } from "../utils/getPlatformQuery";
+
+// requests to the msync backend endpoints
 
 // todo, migrate to trpc
-interface User {
-  id: number;
-  firstName: string;
-  lastName?: string;
-  phoneNumber?: string;
-  discordId?: string;
-  channelId: string;
-  roleId: number;
-}
-interface Role {
-  id: number;
-  name: string;
-}
+export const getUser = async (
+  platformId: string, // discordId, phoneNumber
+  platform: Platform
+): Promise<User> => {
+  const queryType = getPlatformQuery(platform);
 
-export const getUser = async (discordId: string): Promise<User> => {
   const options = {
     method: "GET",
-    url: `${process.env.BACKEND_URL}/message/users?discordId=${discordId}`,
+    url: `${process.env.BACKEND_URL}/message/users${queryType}${platformId}`,
   };
   const response = await axios.request(options);
   return response.data[0];

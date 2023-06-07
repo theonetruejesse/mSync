@@ -1,4 +1,4 @@
-// currently useless, todo -> restructure project to use types
+// currently useless, todo -> restructure project to use types + shared utils + libs
 // or just like, migrate to tRPC
 
 enum Platform {

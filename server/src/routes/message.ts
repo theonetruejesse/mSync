@@ -1,6 +1,6 @@
 import express from "express";
 import { prisma } from "..";
-import { SendMessage, sendText } from "../sms/sendText";
+import { SendMessage, sendText } from "../requests/twilio";
 
 const router = express.Router();
 
@@ -13,10 +13,10 @@ router.get("/channels/:channelId", async (req, res) => {
   res.send(users);
 });
 
-// gets all users, filtered by id?, number?, and username?
+// gets all users, filtered by id?, phoneNumber?, and discordId?
 router.get("/users", async (req, res) => {
   const filter: any = {};
-  if (req.query.userId) filter["id"] = parseInt(req.query.id as string);
+  if (req.query.id) filter["id"] = parseInt(req.query.id as string);
   if (req.query.phoneNumber) filter["phoneNumber"] = req.query.phoneNumber;
   if (req.query.discordId) filter["discordId"] = req.query.discordId;
 
