@@ -1,28 +1,14 @@
-import { constructMessage } from "../utils/constructMessage";
-import { getChannel, getRole, getUser, sendMessage } from "../requests/message";
+import { sendMessage } from "../requests/message";
 import { Event } from "../structures/Event";
-import { Platform } from "../types/requests";
 
-// todo, error handling for users not in the db
+// todo, migrate to tRPC lmao
 export default new Event("messageCreate", async (message) => {
   if (message.author.bot) return;
+  // console.log(message); //
 
-  const channelId = message.channelId;
-  const senderId = message.author.id;
-
-  const sender = await getUser(senderId, Platform.DISCORD);
-  const role = await getRole(sender.roleId);
-
-  const newMessage = constructMessage({
-    firstName: sender.firstName,
+  await sendMessage({
+    messagingId: message.author.id,
+    channelId: message.channelId,
     message: message.content,
-    roleName: role.name,
-  });
-
-  const chatMembers = await getChannel(channelId);
-  chatMembers.forEach(async (reciever) => {
-    if (reciever.phoneNumber && reciever.phoneNumber != sender.phoneNumber) {
-      await sendMessage(reciever.phoneNumber, newMessage);
-    }
-  });
+  }); // see mSync/server/src/types/sendInput
 });

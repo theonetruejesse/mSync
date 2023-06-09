@@ -34,25 +34,32 @@ router.get("/users/:userId", async (req, res) => {
   res.send(await getUsers({ id: convertNumStr(req.body.userId) }));
 });
 
-// create user, firstName required, lastName optional
+// firstName required, lastName optional
 router.post("/user", async (req, res) => {
   const user = formatUserCreateInput(req.body);
   if (!user) res.send("Invalid request for UserCreateInput");
   else res.send(await createUser(user));
 });
 
-// create user, firstName required, lastName optional
+// everything required
 router.post("/participant", async (req, res) => {
   const participant = formatParticipantCreateInput(req.body);
   if (!participant) res.send("Invalid request for ParticipantCreateInput");
   else res.send(await createParticipant(participant));
 });
 
-// resolve message request coming from some channel
-router.post("/send", async (req, res) => {
-  const sending = formatSendInput(req.body);
-  if (!sending) return res.send("Invalid request for SendInput");
+// set up (specifically for testing sms endpoint):
+// Run server (yarn watch + dev)
+// Create online endpoint (cd ~ && ./ngrok http 4000)
+// Set <ngrok-url.app>/message/send/1 as url message webhook on twilio
 
+// resolve message request coming from some platform
+router.post("/send/:platformId", async (req, res) => {
+  const sending = formatSendInput({
+    ...req.body,
+    platformId: req.params.platformId,
+  });
+  if (!sending) return res.send("Invalid request for SendInput");
   const sender = await getParticipant({
     messagingId: sending.messagingId,
     channelId: sending.channelId,
@@ -69,7 +76,8 @@ router.post("/send", async (req, res) => {
   const channel = await getParticipants({ channelId: sender.channelId });
 
   channel.forEach(async (participant) => {
-    if (participant != sender) await sendMessage(participant, message);
+    if (participant.messagingId != sender.messagingId)
+      await sendMessage(participant, message);
   });
 
   return res.send("Message sent!");

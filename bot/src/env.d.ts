@@ -6,8 +6,6 @@ declare global {
       DISCORD_BOT_GUILD_ID: string;
       DISCORD_BOT_CHANNEL_ID: string;
       BACKEND_URL: string;
-      DISCORD_API_URL: string;
-      PORT: string;
     }
   }
 }
