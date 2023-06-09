@@ -1,6 +1,6 @@
 import { Twilio } from "twilio";
 
-export interface SendMessage {
+interface SendTwilioMessage {
   phoneNumber: string;
   message: string;
 }
@@ -10,7 +10,7 @@ const authToken = process.env.TWILIO_AUTH_TOKEN;
 
 const client = new Twilio(accountSid, authToken);
 
-export const sendText = async (m: SendMessage) => {
+export const sendTwilio = async (m: SendTwilioMessage) => {
   return await client.messages.create({
     from: process.env.TWILIO_NUMBER,
     to: m.phoneNumber,

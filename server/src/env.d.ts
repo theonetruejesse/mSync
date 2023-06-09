@@ -7,6 +7,8 @@ declare global {
       PERSONAL_NUMBER: string;
       DATABASE_URL: string;
       PORT: string;
+      DISCORD_API_URL: string;
+      DISCORD_BOT_TOKEN: string;
     }
   }
 }

@@ -1,96 +1,78 @@
 import express from "express";
-import { prisma } from "..";
-import { SendMessage, sendText } from "../requests/twilio";
+import {
+  getUsers,
+  getParticipants,
+  createUser,
+  createParticipant,
+  getParticipant,
+  getUser,
+  getRole,
+} from "../resolvers";
+import { convertNumStr } from "../utils/convertNumStr";
+import {
+  formatMessage,
+  formatParticipantCreateInput,
+  formatSendInput,
+  formatUserCreateInput,
+  formatUserWhereInput,
+} from "../utils/format";
+import { sendMessage } from "../utils/sendMessage";
 
 const router = express.Router();
 
-// gets all users based on a channel
-router.get("/channels/:channelId", async (req, res) => {
-  const channelId = req.params.channelId;
-  const users = await prisma.user.findMany({
-    where: { channelId: { equals: channelId } },
-  });
-  res.send(users);
+// gets all participants based on a channel
+router.get("participants/:channelId", async (req, res) => {
+  res.send(await getParticipants({ channelId: req.body.channelId }));
 });
 
-// gets all users, filtered by id?, phoneNumber?, and discordId?
 router.get("/users", async (req, res) => {
-  const filter: any = {};
-  if (req.query.id) filter["id"] = parseInt(req.query.id as string);
-  if (req.query.phoneNumber) filter["phoneNumber"] = req.query.phoneNumber;
-  if (req.query.discordId) filter["discordId"] = req.query.discordId;
-
-  const users = await prisma.user.findMany({ where: filter });
-
-  res.send(users);
+  const query = formatUserWhereInput(req.query);
+  res.send(await getUsers(query));
 });
 
-// gets user based on id, throw error if no user exists
 router.get("/users/:userId", async (req, res) => {
-  try {
-    const userId = parseInt(req.params.userId);
-    const user = await prisma.user.findFirstOrThrow({
-      where: { id: { equals: userId } },
-    });
-    res.send(user);
-  } catch (e) {
-    res.send("This user does not exist");
-  }
+  res.send(await getUsers({ id: convertNumStr(req.body.userId) }));
 });
 
-// create user, first name and channel id required, everything else optional
+// create user, firstName required, lastName optional
 router.post("/user", async (req, res) => {
-  const firstName = req.body.firstName as string;
-  const channelId = req.body.channelId as string;
-  if (!firstName || !channelId)
-    res.send("invalid, need firstName and channelId");
+  const user = formatUserCreateInput(req.body);
+  if (!user) res.send("Invalid request for UserCreateInput");
+  else res.send(await createUser(user));
+});
 
-  // todo, define type definitions for entire project
-  const lastName = req.body.lastName
-    ? (req.body.lastName as string)
-    : undefined;
-  const phoneNumber = req.body.phoneNumber
-    ? (req.body.phoneNumber as string)
-    : undefined;
-  const discordId = req.body.discordId
-    ? (req.body.discordId as string)
-    : undefined;
-  const roleId = req.body.roleId
-    ? parseInt(req.body.roleId as string)
-    : undefined;
+// create user, firstName required, lastName optional
+router.post("/participant", async (req, res) => {
+  const participant = formatParticipantCreateInput(req.body);
+  if (!participant) res.send("Invalid request for ParticipantCreateInput");
+  else res.send(await createParticipant(participant));
+});
 
-  const user = await prisma.user.create({
-    data: {
-      firstName,
-      channelId,
-      lastName,
-      phoneNumber,
-      discordId,
-      roleId,
-    },
+// resolve message request coming from some channel
+router.post("/send", async (req, res) => {
+  const sending = formatSendInput(req.body);
+  if (!sending) return res.send("Invalid request for SendInput");
+
+  const sender = await getParticipant({
+    messagingId: sending.messagingId,
+    channelId: sending.channelId,
+  });
+  if (!sender) return res.send("Invalid request for participant");
+
+  const user = await getUser({ id: sender.userId });
+  if (!user) return res.send("Invalid request for user");
+
+  const role = await getRole({ id: sender.roleId });
+  if (!role) return res.send("Invalid request for role");
+
+  const message = formatMessage(user, role, sending.message);
+  const channel = await getParticipants({ channelId: sender.channelId });
+
+  channel.forEach(async (participant) => {
+    if (participant != sender) await sendMessage(participant, message);
   });
 
-  res.send(user);
-});
-
-// gets role based on id, return empty string if none exists
-// todo, would more efficent to just combine the call with get user, specify in typings
-router.get("/roles/:roleId", async (req, res) => {
-  try {
-    const roleId = parseInt(req.params.roleId);
-    const user = await prisma.role.findFirstOrThrow({
-      where: { id: { equals: roleId } },
-    });
-    res.send(user);
-  } catch (e) {
-    res.send("This role does not exist");
-  }
-});
-
-// send text to given number
-router.post("/send", async (req, res) => {
-  const sent = await sendText(req.body as SendMessage);
-  res.send(sent.body);
+  return res.send("Message sent!");
 });
 
 export default router;
