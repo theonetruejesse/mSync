@@ -7,6 +7,7 @@ import {
   getParticipant,
   getUser,
   getRole,
+  getRoles,
 } from "../resolvers";
 import { convertNumStr } from "../utils/convertNumStr";
 import {
@@ -20,8 +21,12 @@ import { sendMessage } from "../utils/sendMessage";
 
 const router = express.Router();
 
+router.get("/roles", async (_, res) => {
+  res.send(await getRoles());
+});
+
 // gets all participants based on a channel
-router.get("participants/:channelId", async (req, res) => {
+router.get("/participants/:channelId", async (req, res) => {
   res.send(await getParticipants({ channelId: req.body.channelId }));
 });
 

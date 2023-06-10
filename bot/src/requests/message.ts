@@ -6,7 +6,7 @@ const DISCORD_PLATFORM = 2; // see mSync/server/src/types/platform
 export const sendMessage = async (data: any) => {
   const options = {
     method: "POST",
-    url: `${process.env.BACKEND_URL}/message/send/${DISCORD_PLATFORM}`,
+    url: `${process.env.PROD_BACKEND_URL}/message/send/${DISCORD_PLATFORM}`,
     data,
   };
   const response = await axios.request(options);
