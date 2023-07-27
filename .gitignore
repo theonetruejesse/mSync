@@ -2,5 +2,4 @@
 */dist
 */.env
 */yarn.lock
-*/tsconfig.json
 */.env.production
