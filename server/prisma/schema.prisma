@@ -16,30 +16,43 @@ model User {
   Participant Participant[]
 }
 
+// ex: admin, counselor, student
 model Role {
   id          Int           @id @default(autoincrement())
   name        String        @db.VarChar(255)
   Participant Participant[]
 }
 
-model Participant {
-  id          Int      @id @default(autoincrement())
-  user        User     @relation(fields: [userId], references: [id])
-  userId      Int
-  channelId   String   @db.VarChar(255)
-  messagingId String   @db.VarChar(255)
-  platform    Platform @relation(fields: [platformId], references: [id])
-  platformId  Int
-  role        Role     @relation(fields: [roleId], references: [id])
-  roleId      Int
-
-  @@index([userId])
-  @@index([platformId])
-  @@index([roleId])
-}
-
+// ex: Discord, SMS, Line
 model Platform {
   id          Int           @id @default(autoincrement())
   name        String        @db.VarChar(255)
   Participant Participant[]
+}
+
+// Each participant is a user, who has a role within a channel. 
+// When sending or relaying messages, participants are identified by messagingId, which is an id specific to a platform. 
+// Each user should only participate in any channel once (todo: implement checks)
+model Participant {
+  id          Int      @id @default(autoincrement())
+
+  // the id of the group chat channel that the user is participating in
+  channelId   String   @db.VarChar(255)
+
+  user        User     @relation(fields: [userId], references: [id])
+  userId      Int
+
+  role        Role     @relation(fields: [roleId], references: [id])
+  roleId      Int
+
+  // a userId specific to a platform (ex: Discord uuid, SMS phone number)
+  messagingId String   @db.VarChar(255)
+
+  // used alongside messagingId to identify where to relay message
+  platform    Platform @relation(fields: [platformId], references: [id])
+  platformId  Int
+
+  @@index([userId])
+  @@index([platformId])
+  @@index([roleId])
 }

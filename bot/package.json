@@ -1,5 +1,5 @@
 {
-  "name": "msync",
+  "name": "msync-bot",
   "version": "1.0.0",
   "description": "discord bot for mSync",
   "main": "dist/index.js",
