@@ -36,6 +36,7 @@ router.get("/users", async (req, res) => {
 });
 
 router.get("/users/:userId", async (req, res) => {
+  // todo, issue with this function on prod
   res.send(await getUsers({ id: convertNumStr(req.body.userId) }));
 });
 
@@ -81,6 +82,7 @@ router.post("/send/:platformId", async (req, res) => {
   const channel = await getParticipants({ channelId: sender.channelId });
 
   channel.forEach(async (participant) => {
+    // todo, fix bug; multiple discord users in channel would mean spam
     if (participant.messagingId != sender.messagingId)
       await sendMessage(participant, message);
   });
