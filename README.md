@@ -15,7 +15,7 @@ Make sure you have been added as a collaborator for each of the following:
 
 ### Running
 1. For both ./bot and ./server, cd to directory then run 'yarn install'
-2. For both ./bot and ./server, create a .env and a .env.production file in root of each directories and copy-paste the env variables into the file.
+2. For both ./bot and ./server, create a .env and a .env.production file in root of each directories and copy-paste the env variables into the file.ß
 3. For both ./bot and ./server, create two terminal instances in root of each directory
     1. in the first instance, run 'yarn watch' (this will compile the ts into js in the dist folder)
     2. in the second instance, run 'yarn dev' (this will run a localhost instance)
