@@ -1,0 +1,18 @@
+{
+  "name": "msync",
+  "version": "1.0.0",
+  "description": "A message syncing application for facilitating omni-channel communication. Internal software for Collegiate. Cheaper than Slack. Easier than convincing clients to adopt Discord.",
+  "main": "index.js",
+  "scripts": {
+    "bot": "\"npm run watch --prefix ./bot\" && \"npm run dev --prefix ./bot\"",
+    "server": "\"npm run watch --prefix ./server\" && \"npm run dev --prefix ./server\"",
+    "all": "concurrently \"npm run bot\" \"npm run server\"",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "concurrently": "^8.2.0"
+  }
+}
