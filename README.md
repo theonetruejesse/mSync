@@ -11,6 +11,7 @@ Make sure you have been added as a collaborator for each of the following:
     - Add account under msync, then add phone number in Product section (to locate Twilio webhooks)
 - PlanetScale organization
     - Add as member of collegiate organization
+- Digital Ocean team
 - Docker (todo: setup)
 
 ### Running
