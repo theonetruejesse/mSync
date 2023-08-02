@@ -5,10 +5,11 @@ import {
   Collection,
   IntentsBitField,
 } from "discord.js";
-import glob from "glob";
 import { RegisterCommandsOptions } from "../types/client";
 import { CommandType } from "../types/command";
 import { Event } from "./Event";
+import * as path from "path";
+import * as fs from "fs";
 
 export class DiscordClient extends Client {
   commands: Collection<string, CommandType> = new Collection();
@@ -47,7 +48,10 @@ export class DiscordClient extends Client {
   async registerModules() {
     // commands
     const slashCommands: ApplicationCommandDataResolvable[] = [];
-    const commandFiles = await glob(`${__dirname}/../commands/*{.ts,.js}`);
+    const commandPath = path.join(__dirname, "../commands/");
+    const commandFiles = fs.readdirSync(commandPath)
+      .filter(filePath => /\.[jt]s$/.test(filePath))
+      .map(filePath => path.join(commandPath, filePath));
 
     console.log("Commands:");
     commandFiles.forEach(async (filePath: string) => {
@@ -65,7 +69,10 @@ export class DiscordClient extends Client {
     });
 
     // events
-    const eventFiles: any = await glob(`${__dirname}/../events/*{.ts,.js}`);
+    const eventPath = path.join(__dirname, "../events/");
+    const eventFiles = fs.readdirSync(eventPath)
+      .filter(filePath => /\.[jt]s$/.test(filePath))
+      .map(filePath => path.join(eventPath, filePath));
     eventFiles.forEach(async (filePath: string) => {
       const event: Event<keyof ClientEvents> = await this.importFile(filePath);
       this.on(event.event, event.run);
