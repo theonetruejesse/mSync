@@ -4,8 +4,8 @@
   "description": "A message syncing application for facilitating omni-channel communication. Internal software for Collegiate. Cheaper than Slack. Easier than convincing clients to adopt Discord.",
   "main": "index.js",
   "scripts": {
-    "bot": "\"npm run watch --prefix ./bot\" && \"npm run dev --prefix ./bot\"",
-    "server": "\"npm run watch --prefix ./server\" && \"npm run dev --prefix ./server\"",
+    "bot": "cd ./bot && npm run all",
+    "server": "cd ./server && npm run all",
     "all": "concurrently \"npm run bot\" \"npm run server\"",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -13,6 +13,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "concurrently": "^8.2.0"
+    "concurrently": "^8.2.0",
+    "tsc": "^2.0.4",
+    "typescript": "^5.1.6"
   }
 }
