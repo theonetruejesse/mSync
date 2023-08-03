@@ -2,14 +2,14 @@ import { ChannelType, PermissionsBitField, SlashCommandStringOption } from "disc
 import { Command } from "../structures/Command";
 import { createUser, createParticipant } from "../requests/message";
 
-const DISCORD_PLATFORM = 2;
-const STUDENT_ROLE = 3;
+const DISCORD_PLATFORM = 2; // place constants in a constants.ts file
+const STUDENT_ROLE = 3; // also probably worth checking which env vars are actually env vars and which are just constants
 
-function validateName(name: string) {
+function validateName(name: string) { // move utils to util file
   return /^\w+$/.test(name);
 }
 
-function validatePhoneNumber(phoneNumber: string) {
+function validatePhoneNumber(phoneNumber: string) { // move utils to util file
   return /^\d+$/.test(phoneNumber);
 }
 
@@ -38,7 +38,7 @@ export default new Command({
     if (guild == null) return;
 
     const botId = interaction.client.user.id;
-    const hostId = interaction.member.id;
+    const hostId = interaction.member.id; // add comment specifying what hostId is
 
     const firstName = (interaction.options.get("first-name")?.value ?? "null") as string;
     const lastName = (interaction.options.get("last-name")?.value ?? "null") as string;
@@ -51,8 +51,8 @@ export default new Command({
     const { id: channelId } = await guild.channels.create({
       name: `${firstName} ${lastName}`,
       type: ChannelType.GuildText,
-      parent: process.env.DISCORD_BOT_CATEGORY_ID,
-      permissionOverwrites: [
+      parent: process.env.DISCORD_BOT_CATEGORY_ID, // did you remember to run gen-env?
+      permissionOverwrites: [ // add comment specifying what these settings enable
         { id: guild.id, deny: [PermissionsBitField.Flags.ViewChannel] },
         { id: botId, allow: [PermissionsBitField.Flags.ViewChannel] },
         { id: hostId, allow: [PermissionsBitField.Flags.ViewChannel] }
@@ -68,8 +68,8 @@ export default new Command({
 
     const { id: participantId } = await createParticipant({
       channelId,
-      messagingId: hostId,
-      platformId: DISCORD_PLATFORM,
+      messagingId: hostId, // should be phone number
+      platformId: DISCORD_PLATFORM, // should be sms platform
       roleId: STUDENT_ROLE,
       userId
     });
