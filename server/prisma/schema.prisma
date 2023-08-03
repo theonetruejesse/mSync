@@ -34,23 +34,23 @@ model Platform {
 // When sending or relaying messages, participants are identified by messagingId, which is an id specific to a platform. 
 // Each user should only participate in any channel once (todo: implement checks)
 model Participant {
-  id          Int      @id @default(autoincrement())
+  id Int @id @default(autoincrement())
 
   // the id of the group chat channel that the user is participating in
-  channelId   String   @db.VarChar(255)
+  channelId String @db.VarChar(255)
 
-  user        User     @relation(fields: [userId], references: [id])
-  userId      Int
+  user   User @relation(fields: [userId], references: [id])
+  userId Int
 
-  role        Role     @relation(fields: [roleId], references: [id])
-  roleId      Int
+  role   Role @relation(fields: [roleId], references: [id])
+  roleId Int
 
   // a userId specific to a platform (ex: Discord uuid, SMS phone number)
-  messagingId String   @db.VarChar(255)
+  messagingId String @db.VarChar(255)
 
   // used alongside messagingId to identify where to relay message
-  platform    Platform @relation(fields: [platformId], references: [id])
-  platformId  Int
+  platform   Platform @relation(fields: [platformId], references: [id])
+  platformId Int
 
   @@index([userId])
   @@index([platformId])
