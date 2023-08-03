@@ -28,7 +28,7 @@ Make sure you have been added as a collaborator for each of the following:
 ## Development
 
 ### Adding Variables
-Whenever you add a new .env variable, run 'yarn gen-env' in the associated directory to add it to types.
+Whenever you add a new .env (and .env.production) variable, run 'yarn gen-env' in the associated directory to add it to types.
 
 ### Updating DB Schema
 Whenever you are updating a schema, run migrations via 'npx prisma migrate' (todo: testing vs prod branches).
