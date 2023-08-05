@@ -2,14 +2,12 @@ import {
   ChannelType,
   PermissionsBitField,
   SlashCommandStringOption,
+  ChatInputCommandInteraction,
 } from "discord.js";
 import { Command } from "../structures/Command";
 import { createUser, createParticipant } from "../requests/message";
-import { validateName } from "../utils/validateName";
-import { validatePhoneNumber } from "../utils/validatePhoneNumber";
-
-const SMS_PLATFORM = 1; // place constants in a constants.ts file
-const STUDENT_ROLE = 3; // also probably worth checking which env vars are actually env vars and which are just constants
+import { validateName, validatePhoneNumber } from "../utils/validate";
+import { SMS_PLATFORM, STUDENT_ROLE } from "../constants";
 
 export default new Command({
   name: "create-student",
@@ -33,31 +31,40 @@ export default new Command({
     let { guild } = interaction;
     if (guild == null) return;
 
-    const botId = interaction.client.user.id;
-    const hostId = interaction.member.id; // add comment specifying what hostId is
+    const setOptionType = (option: string): string | null => {
+      const interactionOption = interaction.options.get(option);
+      if (!interactionOption || !interactionOption.value) return null;
+      return interactionOption.value as string;
+    };
 
-    // create error handling util for null checking + exception stuff
-    const firstName = (interaction.options.get("first-name")?.value ??
-      "null") as string;
-    const lastName = (interaction.options.get("last-name")?.value ??
-      "null") as string;
-    const phoneNumber = (interaction.options.get("phone-number")?.value ??
-      "null") as string;
+    const firstName = setOptionType("first-name");
+    const lastName = setOptionType("last-name");
+    const phoneNumber = setOptionType("phone-number");
 
-    if (!validateName(firstName) || !validateName(lastName)) {
-      interaction.editReply("Invalid name");
+    if (!firstName || !validateName(firstName)) {
+      interaction.editReply("Invalid first name");
       return;
     }
 
+    if (!lastName || !validateName(lastName)) {
+      interaction.editReply("Invalid last name");
+      return;
+    }
+
+    if (!phoneNumber || !validatePhoneNumber(phoneNumber)) {
+      interaction.editReply("Invalid phone number");
+      return;
+    }
+
+    const discordUserId = interaction.client.user.id;
     const { id: channelId } = await guild.channels.create({
       name: `${firstName} ${lastName}`,
       type: ChannelType.GuildText,
-      parent: process.env.DISCORD_BOT_CATEGORY_ID, // did you remember to run gen-env?
+      parent: process.env.DISCORD_BOT_CATEGORY_ID,
       permissionOverwrites: [
         // add comment specifying what these settings enable
         { id: guild.id, deny: [PermissionsBitField.Flags.ViewChannel] },
-        { id: botId, allow: [PermissionsBitField.Flags.ViewChannel] },
-        { id: hostId, allow: [PermissionsBitField.Flags.ViewChannel] },
+        { id: discordUserId, allow: [PermissionsBitField.Flags.ViewChannel] },
       ],
     });
     console.log(`Channel \`${channelId}\` created!`);

@@ -4,7 +4,7 @@ import { Event } from "../structures/Event";
 // todo, migrate to tRPC lmao
 export default new Event("messageCreate", async (message) => {
   if (message.author.bot) return;
-  // console.log(message); //
+  console.log(message.author.id); //
 
   await sendMessage({
     messagingId: message.author.id,

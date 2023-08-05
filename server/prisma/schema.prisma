@@ -36,7 +36,7 @@ model Platform {
 model Participant {
   id Int @id @default(autoincrement())
 
-  // the id of the group chat channel that the user is participating in
+  // the id of the discord group chat channel that the user is participating in
   channelId String @db.VarChar(255)
 
   user   User @relation(fields: [userId], references: [id])

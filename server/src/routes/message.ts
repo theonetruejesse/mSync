@@ -66,6 +66,7 @@ router.post("/send/:platformId", async (req, res) => {
     platformId: req.params.platformId,
   });
   if (!sending) return res.send("Invalid request for SendInput");
+
   const sender = await getParticipant({
     messagingId: sending.messagingId,
     channelId: sending.channelId,
@@ -81,11 +82,14 @@ router.post("/send/:platformId", async (req, res) => {
   const message = formatMessage(user, role, sending.message);
   const channel = await getParticipants({ channelId: sender.channelId });
 
-  channel.forEach(async (participant) => {
-    // todo, fix bug; multiple discord users in channel would mean spam
-    if (participant.messagingId != sender.messagingId)
-      await sendMessage(participant, message);
-  });
+  await Promise.all(
+    channel.map((participant) => {
+      // todo, fix bug; multiple discord users in channel would mean spam
+      if (participant.messagingId != sender.messagingId)
+        return sendMessage(participant, message);
+      return;
+    })
+  );
 
   return res.send("Message sent!");
 });

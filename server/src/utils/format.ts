@@ -26,7 +26,7 @@ export const formatParticipantCreateInput = (
   participantQuery: any
 ): Prisma.ParticipantCreateInput | undefined => {
   const channelId: string = participantQuery.channelId;
-  const messagingId: string = participantQuery.channelId;
+  const messagingId: string = participantQuery.messagingId;
   const platformId = convertNumStr(participantQuery.platformId);
   const roleId = convertNumStr(participantQuery.roleId);
   const userId = convertNumStr(participantQuery.userId);
