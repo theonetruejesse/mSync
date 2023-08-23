@@ -1,58 +1,50 @@
 generator client {
-  provider      = "prisma-client-js"
-  binaryTargets = ["native", "debian-openssl-1.1.x"]
+  provider = "prisma-client-js"
 }
 
 datasource db {
-  provider     = "mysql"
-  url          = env("DATABASE_URL")
-  relationMode = "prisma"
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+model Channel {
+  id          Int          @id @default(autoincrement())
+  name        String       @unique
+  discordId   String       @unique
+  memberships Membership[]
 }
 
 model User {
-  id          Int           @id @default(autoincrement())
-  firstName   String        @db.VarChar(255)
-  lastName    String?       @db.VarChar(255)
-  Participant Participant[]
+  id          Int          @id @default(autoincrement())
+  name        String
+  memberships Membership[]
+  contacts    Contact[]
 }
 
-// ex: admin, counselor, student
+model Contact {
+  id       Int    @id @default(autoincrement())
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId   Int
+  platform String // Use `enum` in MySQL
+  contact  String @unique
+  
+  @@unique([userId, platform])
+}
+
 model Role {
-  id          Int           @id @default(autoincrement())
-  name        String        @db.VarChar(255)
-  Participant Participant[]
+  id          Int          @id @default(autoincrement())
+  name        String       @unique
+  memberships Membership[]
 }
 
-// ex: Discord, SMS, Line
-model Platform {
-  id          Int           @id @default(autoincrement())
-  name        String        @db.VarChar(255)
-  Participant Participant[]
-}
+model Membership {
+  id        Int     @id @default(autoincrement())
+  channel   Channel @relation(fields: [channelId], references: [id], onDelete: Cascade)
+  channelId Int
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    Int
+  role      Role?   @relation(fields: [roleId], references: [id], onDelete: SetNull)
+  roleId    Int?
 
-// Each participant is a user, who has a role within a channel. 
-// When sending or relaying messages, participants are identified by messagingId, which is an id specific to a platform. 
-// Each user should only participate in any channel once (todo: implement checks)
-model Participant {
-  id Int @id @default(autoincrement())
-
-  // the id of the group chat channel that the user is participating in
-  channelId String @db.VarChar(255)
-
-  user   User @relation(fields: [userId], references: [id])
-  userId Int
-
-  role   Role @relation(fields: [roleId], references: [id])
-  roleId Int
-
-  // a userId specific to a platform (ex: Discord uuid, SMS phone number)
-  messagingId String @db.VarChar(255)
-
-  // used alongside messagingId to identify where to relay message
-  platform   Platform @relation(fields: [platformId], references: [id])
-  platformId Int
-
-  @@index([userId])
-  @@index([platformId])
-  @@index([roleId])
+  @@unique([channelId, userId])
+  @@index([channelId, userId])
 }

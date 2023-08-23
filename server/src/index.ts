@@ -1,30 +1,20 @@
-import "dotenv-safe/config";
-import express from "express";
-import { PrismaClient } from "@prisma/client";
-import bodyParser from "body-parser";
+import { config } from "dotenv-safe";
+import { createContext } from "./core/context";
+import { createHTTPServer } from "@trpc/server/adapters/standalone";
+import { router } from "./core/trpc";
+import { discordRouter } from "./discord/router";
+import { twilioRouter } from "./twilio/router";
 
-// import { smsEndpoints } from "./sms/endpoints";
-import messageRoute from "./routes/message";
+config();
 
-export const prisma = new PrismaClient();
-export const app = express();
+const appRouter = router({
+  discord: discordRouter,
+  twilio: twilioRouter
+});
 
-const main = async () => {
-  app.use(bodyParser.json());
-  app.use(bodyParser.urlencoded({ extended: false }));
+createHTTPServer({
+  router: appRouter,
+  createContext
+}).listen(process.env.PORT);
 
-  app.use("/message", messageRoute);
-
-  app.listen(parseInt(process.env.PORT), () => {
-    console.log(`\nlistening to port ${process.env.PORT}\n`);
-  });
-};
-
-main()
-  .then(async () => {
-    await prisma.$disconnect();
-  })
-  .catch(async (err) => {
-    await prisma.$disconnect();
-    console.log(err);
-  });
+export type AppRouter = typeof appRouter;

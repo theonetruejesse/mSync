@@ -1,9 +1,6 @@
-node_modules
-
-*/dist
-
-yarn.lock
-package-lock.json
-
-*/.env
-*/.env.production
+**/node_modules
+**/dist
+**/yarn.lock
+**/package-lock.json
+**/.env
+**/.env.production
