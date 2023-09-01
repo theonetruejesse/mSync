@@ -55,7 +55,8 @@ export class Bot {
   private initCommands() {
     return this.importCommands().then((commands) => {
       for (const command of commands) {
-        if (!command.name || !command.handler) continue;
+        if (!command.name) throw "Command must have `name`";
+        if (!command.handler) throw "Command must have `handler`";
         this.commands[command.name] = command;
       }
       return this.rest.registerCommands(commands);
@@ -65,7 +66,8 @@ export class Bot {
   private initListeners() {
     return this.importListeners().then((listeners) => {
       for (const listener of listeners) {
-        if (!listener.name || !listener.handler) continue;
+        if (!listener.event) throw "Listener must have `event`";
+        if (!listener.handler) throw "Listener must have `handler`";
         this.listeners[listener.event] = listener;
       }
       return this.client.addListeners(listeners);

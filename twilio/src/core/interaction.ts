@@ -102,7 +102,7 @@ export class InteractionOptions {
     }
   }
 
-  public addCommand(command: Command) {
+  public setCommand(command: Command) {
     function isBoolean(value: any): value is boolean {
       return value == true || value == false || /[01]|true|false/.test(value);
     }
@@ -213,15 +213,15 @@ export class Interaction extends Message {
 
   constructor(client: Client, incomingMessage: IncomingMessage) {
     super(client, incomingMessage);
-    const parsed = /(?<=\/)([\w\d]+)\s*(.+)/.exec(incomingMessage.Body);
+    const parsed = /(?<=\/)([\w\d][-\w\d]*)\s*(.*)/.exec(incomingMessage.Body);
     if (parsed == null)
       throw `Could not parse \`incomingMessage.Body\` '${incomingMessage.Body}'`;
     this.commandName = parsed[1];
     this.options = new InteractionOptions(parsed[2]);
   }
 
-  public addCommand(command: Command) {
+  public setCommand(command: Command) {
     this.command = command;
-    this.options.addCommand(command);
+    this.options.setCommand(command);
   }
 }

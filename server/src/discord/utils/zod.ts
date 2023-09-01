@@ -33,7 +33,7 @@ export const $z = {
     renderOutput: (): z.ZodType<RenderOutput> =>
       z.object({
         content: z.string().optional(),
-        components: $z.component.actionRow().array().optional(),
+        components: $z.component.actionRow().array(),
         resolved: z.boolean()
       })
   },

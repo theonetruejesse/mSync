@@ -1,9 +1,11 @@
 import { inferAsyncReturnType } from "@trpc/server";
 import { prisma } from "./prisma";
+import { send } from "./send";
 
 export async function createContextInner() {
   return {
-    prisma
+    prisma,
+    send
   };
 }
 

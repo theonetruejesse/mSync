@@ -9,9 +9,10 @@ export class Awaiter {
   public timeout: number = 60_000;
   private resolver?: AwaiterResolver;
 
-  public await() {
+  public await(): Promise<Message> {
     const { from, client, timeout } = this;
-    if (!from || !client) return;
+    if (!from) throw "Missing `from`";
+    if (!client) throw "Missing `client`";
     if (client.awaiters.hasOwnProperty(from)) {
       throw `Cannot have multiple awaiters listening to same \`from\` '${from}'`;
     }
@@ -20,13 +21,15 @@ export class Awaiter {
         delete client.awaiters[from];
     }, timeout);
     return new Promise((resolve) => {
+      client.awaiters[from] = this;
       this.resolver = (message) => resolve(message);
     });
   }
 
   public resolve(message: Message) {
     const { from, client } = this;
-    if (!from || !client) return;
+    if (!from) throw "Missing `from`";
+    if (!client) throw "Missing `client`";
     this.resolver?.(message);
     delete client.awaiters[from];
   }

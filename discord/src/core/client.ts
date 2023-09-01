@@ -13,7 +13,8 @@ export class Client {
 
   public addListeners(listeners: Listener[]) {
     for (const listener of listeners) {
-      if (!listener.event || !listener.handler) continue;
+      if (!listener.event) throw "Listener must have `event`";
+      if (!listener.handler) throw "Listener must have `handler`";
       log(`Listening to event \`${listener.event}\``);
       if (listener.once) {
         this.client.once(listener.event, listener.handler);
@@ -25,7 +26,8 @@ export class Client {
 
   public removeListeners(listeners: Listener[]) {
     for (const listener of listeners) {
-      if (!listener.event || !listener.handler) continue;
+      if (!listener.event) throw "Listener must have `event`";
+      if (!listener.handler) throw "Listener must have `handler`";
       log(`Ignoring event \`${listener.event}\``);
       this.client.removeListener(listener.event, listener.handler);
     }

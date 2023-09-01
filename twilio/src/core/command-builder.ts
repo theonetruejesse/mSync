@@ -16,17 +16,15 @@ export class CommandOptionBuilder extends CommandOption {
   }
 
   public setLongName(longName: string) {
-    if (!/^[\w\d][-\w\d]*$/.test(longName)) {
+    if (!/^[\w\d][-\w\d]*$/.test(longName))
       throw `Invalid \`longName\` \'${longName}\'`;
-    }
     this.longName = longName;
     return this;
   }
 
   public setShortName(shortName: string) {
-    if (!/^[\w\d]$/.test(shortName)) {
+    if (!/^[\w\d]$/.test(shortName))
       throw `Invalid \`shortName\` \'${shortName}\'`;
-    }
     this.shortName = shortName;
     return this;
   }
@@ -60,6 +58,7 @@ export class CommandBuilder extends Command {
   }
 
   public setName(name: string) {
+    if (!/^[\w\d][-\w\d]*$/.test(name)) throw `Invalid \`name\` \'${name}\'`;
     this.name = name;
     return this;
   }

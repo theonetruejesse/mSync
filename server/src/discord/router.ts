@@ -72,15 +72,36 @@ export const discordRouter = router({
           return rv;
         }, input);
       })
-  })
-  // message: discordProcedure
-  //   .input(
-  //     z.object({
-  //       discordId: z.string(),
-  //       content: z.string()
-  //     })
-  //   )
-  //   .mutation(({ ctx, input }) => {
-
-  //   })
+  }),
+  message: discordProcedure
+    .input(
+      z.object({
+        channelDiscordId: z.string(),
+        userDiscordId: z.string(),
+        message: z.string()
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { send, prisma } = ctx;
+      const { channelDiscordId, userDiscordId, message } = input;
+      const channel = await prisma.channel.findUnique({
+        where: {
+          discordId: channelDiscordId
+        }
+      });
+      if (!channel) return;
+      const sender = await prisma.membership.findFirst({
+        where: {
+          user: {
+            discordId: userDiscordId
+          },
+          channel: {
+            discordId: channelDiscordId
+          }
+        }
+      });
+      if (!sender) return;
+      for (const platform in send)
+        if (platform != "discord") send[platform](message, sender, channel);
+    })
 });

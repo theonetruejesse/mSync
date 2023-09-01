@@ -18,10 +18,11 @@ export function formatUser(user: User) {
 
 export function formatContact(contact: Contact) {
   let rv = contact.contact;
-  rv += " (";
-  if (contact.user) rv += formatUser(contact.user) + ", ";
-  rv += formatPlatform(contact.platform);
-  rv += ")";
+  if (contact.user) {
+    rv += " (";
+    rv += formatUser(contact.user);
+    rv += ")";
+  }
   return rv;
 }
 

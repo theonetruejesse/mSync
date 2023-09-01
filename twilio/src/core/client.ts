@@ -54,7 +54,7 @@ export class Client {
       try {
         const interaction = new Interaction(this, incomingMessage);
         if (this.commands.hasOwnProperty(interaction.commandName)) {
-          interaction.addCommand(this.commands[interaction.commandName]);
+          interaction.setCommand(this.commands[interaction.commandName]);
           this.eventEmitter.emit(Events.InteractionCreate, interaction);
           return;
         }
@@ -68,7 +68,7 @@ export class Client {
 
   public registerCommands(commands: Command[]) {
     for (const command of commands) {
-      if (!command.name) continue;
+      if (!command.name) throw "Command must have `name`";
       log(`Registering command \`/${command.name}\``);
       this.commands[command.name] = command;
     }
@@ -76,7 +76,7 @@ export class Client {
 
   public deregisterCommands(commands: Command[]) {
     for (const command of commands) {
-      if (!command.name) continue;
+      if (!command.name) throw "Command must have `name`";
       log(`Deregistering command \`/${command.name}\``);
       delete this.commands[command.name];
     }
@@ -84,7 +84,8 @@ export class Client {
 
   public addListeners(listeners: Listener[]) {
     for (const listener of listeners) {
-      if (!listener.event || !listener.handler) continue;
+      if (!listener.event) throw "Listener must have `event`";
+      if (!listener.handler) throw "Listener must have `handler`";
       log(`Listening to event \`${listener.event}\``);
       if (listener.once) {
         this.eventEmitter.once(listener.event, listener.handler);
@@ -96,7 +97,8 @@ export class Client {
 
   public removeListeners(listeners: Listener[]) {
     for (const listener of listeners) {
-      if (!listener.event || !listener.handler) continue;
+      if (!listener.event) throw "Listener must have `event`";
+      if (!listener.handler) throw "Listener must have `handler`";
       log(`Ignoring event \`${listener.event}\``);
       this.eventEmitter.removeListener(listener.event, listener.handler);
     }

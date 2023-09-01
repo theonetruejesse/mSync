@@ -22,20 +22,20 @@ export type RenderInput = {
   [customId: string]: ButtonInput | StringSelectMenuInput;
 };
 
-export type RenderDraft = {
-  content?: string;
-  components?: (
+export class RenderDraft {
+  public content?: string;
+  public components: (
     | ActionRowBuilder<ButtonBuilder>
     | ActionRowBuilder<StringSelectMenuBuilder>
-  )[];
-  resolved: boolean;
+  )[] = [];
+  public resolved: boolean = false;
 };
 
-export type RenderOutput = {
-  content?: string;
-  components?: (
+export class RenderOutput {
+  public content?: string;
+  public components: (
     | APIActionRowComponent<APIButtonComponent>
     | APIActionRowComponent<APISelectMenuComponent>
-  )[];
-  resolved: boolean;
+  )[] = [];
+  public resolved: boolean = false;
 };

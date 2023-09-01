@@ -15,4 +15,9 @@ export class AwaiterBuilder extends Awaiter {
     this.client = client;
     return this;
   }
+
+  public setTimeout(timeout: number) {
+    this.timeout = timeout;
+    return this;
+  }
 }

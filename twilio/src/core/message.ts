@@ -22,7 +22,11 @@ export class Message {
     });
   }
 
-  public awaitReply() {
-    return new AwaiterBuilder().setClient(this.client).setFrom(this.from);
+  public awaitReply({ timeout }: { timeout: number } = { timeout: 60_000 }) {
+    return new AwaiterBuilder()
+      .setClient(this.client)
+      .setFrom(this.from)
+      .setTimeout(timeout)
+      .await();
   }
 }

@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { $z } from "./zod";
-import type {
+import {
   ButtonInput,
   StringSelectMenuInput,
   RenderInput,
@@ -66,11 +66,7 @@ export async function render(
   };
 }
 
-export class RenderDraftBuilder {
-  public content: RenderDraft["content"];
-  public components: NonNullable<RenderDraft["components"]> = [];
-  public resolved: RenderDraft["resolved"] = false;
-
+export class RenderDraftBuilder extends RenderDraft {
   public setContent(content: string) {
     this.content = content;
     return this;
@@ -86,7 +82,7 @@ export class RenderDraftBuilder {
     return this;
   }
 
-  public setResolved(resolved: boolean = true) {
+  public setResolved(resolved: boolean) {
     this.resolved = resolved;
     return this;
   }
