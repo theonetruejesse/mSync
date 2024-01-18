@@ -1,10 +1,9 @@
 import { config } from "dotenv-safe";
-import { Bot } from "./core/bot";
-
 config();
 
-export const bot = new Bot();
-bot.init();
+import { Forward } from "./core/forward";
+
+new Forward();
 
 import axios from "axios";
 

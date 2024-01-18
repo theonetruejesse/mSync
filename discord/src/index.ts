@@ -1,7 +1,7 @@
 import { config } from "dotenv-safe";
-import { Bot } from "./core/bot";
-
 config();
+
+import { Bot } from "./core/bot";
 
 export const bot = new Bot();
 bot.init();

@@ -1,62 +1,86 @@
-import { Channel, User, Contact, Role, Membership } from "../types/prisma";
+import {
+  Channel,
+  Admin,
+  Client,
+  AdminContact,
+  ClientContact,
+  AdminMembership,
+  ClientMembership
+} from "../types/prisma";
 import {
   formatChannel,
-  formatUser,
-  formatContact,
-  formatRole,
-  formatMembership
+  formatAdmin,
+  formatClient,
+  formatAdminContact,
+  formatClientContact,
+  formatAdminMembership,
+  formatClientMembership
 } from "./format";
 import {
   StringSelectMenuBuilder,
   StringSelectMenuOptionBuilder
 } from "discord.js";
 
-export function buildChannelSelectMenu(channels: Channel[]) {
+export function buildSelectMenu<T>(
+  options: T[],
+  labelFn: (option: T) => string,
+  valueFn: (option: T) => string
+) {
   return new StringSelectMenuBuilder().addOptions(
-    channels.map((channel) =>
+    options.map((option) =>
       new StringSelectMenuOptionBuilder()
-        .setLabel(formatChannel(channel))
-        .setValue(channel.id.toString())
+        .setLabel(labelFn(option))
+        .setValue(valueFn(option))
     )
   );
 }
 
-export function buildUserSelectMenu(users: User[]) {
-  return new StringSelectMenuBuilder().addOptions(
-    users.map((user) =>
-      new StringSelectMenuOptionBuilder()
-        .setLabel(formatUser(user))
-        .setValue(user.id.toString())
-    )
+export function buildChannelSelect(channels: Channel[]) {
+  return buildSelectMenu<Channel>(channels, formatChannel, (channel) =>
+    channel.id.toString()
   );
 }
 
-export function buildContactSelectMenu(contacts: Contact[]) {
-  return new StringSelectMenuBuilder().addOptions(
-    contacts.map((contact) =>
-      new StringSelectMenuOptionBuilder()
-        .setLabel(formatContact(contact))
-        .setValue(contact.id.toString())
-    )
+export function buildAdminSelect(users: Admin[]) {
+  return buildSelectMenu<Admin>(users, formatAdmin, (user) =>
+    user.id.toString()
   );
 }
 
-export function buildRoleSelect(roles: Role[]) {
-  return new StringSelectMenuBuilder().addOptions(
-    roles.map((role) =>
-      new StringSelectMenuOptionBuilder()
-        .setLabel(formatRole(role))
-        .setValue(role.id.toString())
-    )
+export function buildClientSelect(users: Client[]) {
+  return buildSelectMenu<Client>(users, formatClient, (user) =>
+    user.id.toString()
   );
 }
 
-export function buildMembershipSelect(memberships: Membership[]) {
-  return new StringSelectMenuBuilder().addOptions(
-    memberships.map((membership) =>
-      new StringSelectMenuOptionBuilder()
-        .setLabel(formatMembership(membership))
-        .setValue(membership.id.toString())
-    )
+export function buildAdminContactSelect(contacts: AdminContact[]) {
+  return buildSelectMenu<AdminContact>(
+    contacts,
+    formatAdminContact,
+    (contact) => contact.id.toString()
+  );
+}
+
+export function buildClientContactSelect(contacts: ClientContact[]) {
+  return buildSelectMenu<ClientContact>(
+    contacts,
+    formatClientContact,
+    (contact) => contact.id.toString()
+  );
+}
+
+export function buildAdminMembershipSelect(memberships: AdminMembership[]) {
+  return buildSelectMenu<AdminMembership>(
+    memberships,
+    formatAdminMembership,
+    (membership) => membership.id.toString()
+  );
+}
+
+export function buildClientMembershipSelect(memberships: ClientMembership[]) {
+  return buildSelectMenu<ClientMembership>(
+    memberships,
+    formatClientMembership,
+    (membership) => membership.id.toString()
   );
 }

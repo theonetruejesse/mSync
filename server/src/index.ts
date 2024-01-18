@@ -1,11 +1,12 @@
 import { config } from "dotenv-safe";
+config();
+
 import { createContext } from "./core/context";
 import { createHTTPServer } from "@trpc/server/adapters/standalone";
 import { router } from "./core/trpc";
 import { discordRouter } from "./discord/router";
 import { twilioRouter } from "./twilio/router";
-
-config();
+import cors from "cors";
 
 const appRouter = router({
   discord: discordRouter,
@@ -14,6 +15,7 @@ const appRouter = router({
 
 createHTTPServer({
   router: appRouter,
+  middleware: cors(),
   createContext
 }).listen(process.env.PORT);
 

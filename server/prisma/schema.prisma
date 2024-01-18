@@ -8,51 +8,74 @@ datasource db {
 }
 
 model Channel {
-  id           Int          @id @default(autoincrement())
-  name         String       @unique
-  discordId    String       @unique
-  webhookId    String       @unique // This *does not* violate third normal
-                                    // form. Think of a webhook as a component
-                                    // of the channel; it behaves as an
-                                    // interface between the channel and other
-                                    // platforms
-  webhookToken String       @unique
-  memberships  Membership[]
-  contacts     Contact[]
+  id                Int                @id @default(autoincrement())
+  name              String             @unique
+  discordId         String             @unique
+  webhookId         String             @unique
+  webhookToken      String             @unique
+  adminMemberships  AdminMembership[]
+  clientMemberships ClientMembership[]
+  type              String
+
+  @@unique([id, type])
 }
 
-model User {
-  id          Int          @id @default(autoincrement())
+model Proxy {
+  id      Int    @id @default(autoincrement())
+  contact String @unique
+  type    String @unique
+}
+
+model Admin {
+  id               Int               @id @default(autoincrement())
+  name             String
+  adminMemberships AdminMembership[]
+  contacts         AdminContact[]
+}
+
+model Client {
+  id          Int                @id @default(autoincrement())
   name        String
-  discordId   String?      @unique
-  memberships Membership[]
-  contacts    Contact[]
+  memberships ClientMembership[]
+  contacts    ClientContact[]
 }
 
-model Contact {
-  id        Int      @id @default(autoincrement())
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId    Int      @unique
-  contact   String   @unique
-  channel   Channel? @relation(fields: [channelId], references: [id], onDelete: Cascade)
-  channelId Int?
+model AdminContact {
+  id      Int     @id @default(autoincrement())
+  user    Admin   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId  Int     @unique
+  contact String  @unique
 }
 
-model Role {
-  id          Int          @id @default(autoincrement())
-  name        String       @unique
-  memberships Membership[]
+model ClientContact {
+  id      Int     @id @default(autoincrement())
+  user    Client  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId  Int     @unique
+  contact String  @unique
 }
 
-model Membership {
+model AdminMembership {
   id        Int     @id @default(autoincrement())
   channel   Channel @relation(fields: [channelId], references: [id], onDelete: Cascade)
   channelId Int
-  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user      Admin   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    Int
-  role      Role?   @relation(fields: [roleId], references: [id], onDelete: SetNull)
-  roleId    Int?
+  role      String
 
+  @@unique([channelId, userId])
+  @@index([channelId, userId])
+}
+
+model ClientMembership {
+  id          Int     @id @default(autoincrement())
+  channel     Channel @relation(fields: [channelId, channelType], references: [id, type], onDelete: Cascade)
+  channelId   Int
+  channelType String
+  user        Client  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId      Int
+  role        String
+
+  @@unique([channelType, userId])
   @@unique([channelId, userId])
   @@index([channelId, userId])
 }

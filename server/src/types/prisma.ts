@@ -1,24 +1,42 @@
 import type {
   Channel as PrismaChannel,
-  User as PrismaUser,
-  Contact as PrismaContact,
-  Role as PrismaRole,
-  Membership as PrismaMembership
+  Admin as PrismaAdmin,
+  Client as PrismaClient,
+  AdminContact as PrismaAdminContact,
+  ClientContact as PrismaClientContact,
+  AdminMembership as PrismaAdminMembership,
+  ClientMembership as PrismaClientMembership
 } from "@prisma/client";
 
-export type Channel = PrismaChannel & { memberships?: Membership[] };
-
-export type User = PrismaUser & {
-  memberships?: Membership[];
-  contacts?: Contact[];
+export type Channel = PrismaChannel & {
+  adminMemberships?: PrismaAdminMembership[];
+  clientMemberships?: PrismaClientMembership[];
 };
 
-export type Contact = PrismaContact & { user?: User };
+export type Admin = PrismaAdmin & {
+  memberships?: AdminMembership[];
+  contacts?: AdminContact[];
+};
 
-export type Role = PrismaRole & { memberships?: Membership[] };
+export type Client = PrismaClient & {
+  memberships?: ClientMembership[];
+  contacts?: ClientContact[];
+};
 
-export type Membership = PrismaMembership & {
+export type AdminContact = PrismaAdminContact & {
+  user?: Admin;
+};
+
+export type ClientContact = PrismaClientContact & {
+  user?: Client;
+};
+
+export type AdminMembership = PrismaAdminMembership & {
   channel?: Channel;
-  user?: User;
-  role?: Role;
+  user?: Admin;
+};
+
+export type ClientMembership = PrismaClientMembership & {
+  channel?: Channel;
+  user?: Client;
 };

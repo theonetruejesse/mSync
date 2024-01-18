@@ -90,14 +90,24 @@ export const discordRouter = router({
         }
       });
       if (!channel) return;
-      const sender = await prisma.membership.findFirst({
-        where: {
-          user: {
-            discordId: userDiscordId
+      const user = await prisma.adminContact
+        .findUnique({
+          where: {
+            contact: userDiscordId
           },
-          channel: {
-            discordId: channelDiscordId
+          include: {
+            user: true
           }
+        })
+        .then((contact) => contact?.user);
+      if (!user) return;
+      const sender = await prisma.adminMembership.findFirst({
+        where: {
+          userId: user.id,
+          channelId: channel.id
+        },
+        include: {
+          user: true
         }
       });
       if (!sender) return;

@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "CommonJS",
+    "skipLibCheck": true,
+    "outDir": "./dist",
+    "declaration": true,
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "strict": true,
+    "noImplicitThis": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "paths": {
+      ".prisma/client": ["../server/node_modules/.prisma/client"],
+      "@prisma/client": ["../server/node_modules/@prisma/client"],
+      "@prisma/client/runtime/library": ["../server/node_modules/@prisma/client/runtime/library"]
+    },
+    "baseUrl": "."
+  },
+  "exclude": ["node_modules", "dist"],
+  "include": ["./src/**/*.ts"]
+}

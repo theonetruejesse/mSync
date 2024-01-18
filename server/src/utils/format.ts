@@ -1,58 +1,97 @@
-import { Channel, User, Contact, Role, Membership } from "../types/prisma";
+import {
+  Channel,
+  Admin,
+  Client,
+  AdminContact,
+  ClientContact,
+  AdminMembership,
+  ClientMembership
+} from "../types/prisma";
 
 export function capitalize(string: string) {
   return string.at(0)?.toUpperCase() + string.slice(1).toLowerCase();
-}
-
-export function formatPlatform(platform: string) {
-  return capitalize(platform);
 }
 
 export function formatChannel(channel: Channel) {
   return channel.name;
 }
 
-export function formatUser(user: User) {
+export function formatAdmin(user: Admin) {
   return user.name;
 }
 
-export function formatContact(contact: Contact) {
+export function formatClient(user: Client) {
+  return user.name;
+}
+
+export function formatAdminContact(contact: AdminContact) {
   let rv = contact.contact;
+  rv += " (";
+  rv += "Discord";
   if (contact.user) {
-    rv += " (";
-    rv += formatUser(contact.user);
-    rv += ")";
+    rv += ", " + formatAdmin(contact.user);
   }
+  rv += ")";
   return rv;
 }
 
-export function formatRole(role: Role) {
-  return role.name;
+export function formatClientContact(contact: ClientContact) {
+  let rv = contact.contact;
+  rv += " (";
+  rv += "Twilio";
+  if (contact.user) {
+    rv += ", " + formatClient(contact.user);
+  }
+  rv += ")";
+  return rv;
 }
 
-export function formatMembership(membership: Membership) {
+export function formatAdminRole(role: string) {
+  return "Admin/" + role;
+}
+
+export function formatClientRole(role: string) {
+  return "Client/" + role;
+}
+
+export function formatAdminMembership(membership: AdminMembership) {
   if (membership.user) {
-    let rv = formatUser(membership.user);
-    if (membership.channel || membership.role) {
-      rv += " (";
-      if (membership.role) rv += formatRole(membership.role);
-      if (membership.channel) rv += ", " + formatChannel(membership.channel);
-      rv += ")";
-    }
-    return rv;
-  }
-  if (membership.role) {
-    let rv = formatRole(membership.role);
+    let rv = formatAdmin(membership.user);
+    rv += " (";
+    rv += formatAdminRole(membership.role);
     if (membership.channel) {
-      rv += " (";
-      rv += formatChannel(membership.channel);
-      rv += ")";
+      rv += ", " + formatChannel(membership.channel);
     }
+    rv += ")";
     return rv;
   }
-  let rv = "";
   if (membership.channel) {
-    rv += " " + formatChannel(membership.channel);
+    return (
+      formatAdminRole(membership.role) +
+      ", " +
+      formatChannel(membership.channel)
+    );
   }
-  return "membership";
+  return formatAdminRole(membership.role);
+}
+
+export function formatClientMembership(membership: ClientMembership) {
+  if (membership.user) {
+    let rv = formatClient(membership.user);
+    rv += " (";
+    rv += formatClientRole(membership.role);
+    if (membership.channel) {
+      rv += ", " + formatChannel(membership.channel);
+    }
+    rv += ")";
+    return rv;
+  }
+  if (membership.channel) {
+    return (
+      formatClientRole(membership.role) +
+      ", " +
+      formatChannel(membership.channel)
+    );
+  }
+  return formatClientRole(membership.role);
 }
